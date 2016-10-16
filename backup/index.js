@@ -6,12 +6,12 @@ var dateFormat = require('dateformat');
 
 exports.handler = function(event, context, callback) {
 
-    Promise.all([firebase.getFoosers(), firebase.getTeams(), firebase.getGames()]).then(function(data) {
+    firebase.getDB().then(function(db) {
         try {
             var zip = new require('node-zip')();
-            zip.file('foosballers.json', JSON.stringify(data[0]));
-            zip.file('games.json', JSON.stringify(data[1]));
-            zip.file('teams.json', JSON.stringify(data[2]));
+            Object.keys(db).forEach(function(key) {
+                zip.file(key + '.json', JSON.stringify(db[key]));
+            });
             var stream = zip.generate({
                 base64: false,
                 compression: 'DEFLATE'
