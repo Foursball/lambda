@@ -1,3 +1,4 @@
 {
-  "firebase": "https://[firebase-project].firebaseio.com"
+  "firebase": "https://[firebase-project].firebaseio.com",
+  "bucket": "[s3-bucket]"
 }

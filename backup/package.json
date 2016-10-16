@@ -9,7 +9,9 @@
   "author": "TheConnMan",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.6.9",
     "bluebird": "^3.4.6",
+    "dateformat": "^1.0.12",
     "node-zip": "^1.1.1",
     "request": "^2.75.0"
   }
