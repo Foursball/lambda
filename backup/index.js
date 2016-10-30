@@ -3,6 +3,7 @@ var firebase = require('./lib/firebase');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3();
 var dateFormat = require('dateformat');
+var SlackWebhook = require('slack-webhook');
 
 exports.handler = function(event, context, callback) {
 
@@ -25,7 +26,18 @@ exports.handler = function(event, context, callback) {
                 if (err) {
                     throw err;
                 }
-                callback(null, "Backup complete to " + result.Location);
+                if (config.slackUrl) {
+                  var slack = new SlackWebhook(config.slackUrl, {
+                    defaults: {
+                      username: 'Firebase Backup'
+                    }
+                  });
+                  slack.send('Firebase backup complete. Backup is located <' + result.Location + '|here>.').then(function() {
+                    callback(null, "Backup complete to " + result.Location);
+                  });
+                } else {
+                  callback(null, "Backup complete to " + result.Location);
+                }
             });
         } catch (e) {
             console.log(e);

@@ -1,4 +1,5 @@
 {
   "firebase": "https://[firebase-project].firebaseio.com",
-  "bucket": "[s3-bucket]"
+  "bucket": "[s3-bucket]",
+  "slackUrl": "https://hooks.slack.com/services/[slack-url]"
 }

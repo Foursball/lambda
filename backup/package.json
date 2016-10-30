@@ -13,6 +13,7 @@
     "bluebird": "^3.4.6",
     "dateformat": "^1.0.12",
     "node-zip": "^1.1.1",
-    "request": "^2.75.0"
+    "request": "^2.75.0",
+    "slack-webhook": "^1.0.0"
   }
 }
