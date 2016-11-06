@@ -1,0 +1,10 @@
+language: node_js
+branches:
+  only:
+  - master
+before_script:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  - aws configure set default.region us-east-1
+script:
+  - bash ./backup/deploy.sh
