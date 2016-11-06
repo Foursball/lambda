@@ -26,21 +26,25 @@ exports.handler = function(event, context, callback) {
                 if (err) {
                     throw err;
                 }
-                if (config.slackUrl) {
-                  var slack = new SlackWebhook(config.slackUrl, {
-                    defaults: {
-                      username: 'Firebase Backup'
-                    }
-                  });
-                  slack.send('Firebase backup complete. Backup is located <' + result.Location + '|here>.').then(function() {
-                    callback(null, "Backup complete to " + result.Location);
-                  });
-                } else {
+                sendSlackMessage('Firebase backup complete. Backup is located <' + result.Location + '|here>.' , function() {
                   callback(null, "Backup complete to " + result.Location);
-                }
+                });
             });
         } catch (e) {
             console.log(e);
         }
     });
 };
+
+function sendSlackMessage(message, callback) {
+    if (config.slackUrl) {
+        var slack = new SlackWebhook(config.slackUrl, {
+            defaults: {
+                username: 'Firebase Backup'
+            }
+        });
+        slack.send(message).then(callback);
+    } else {
+        callback();
+    }
+}
