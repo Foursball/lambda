@@ -8,31 +8,33 @@ var SlackWebhook = require('slack-webhook');
 exports.handler = function(event, context, callback) {
 
     firebase.getDB().then(function(db) {
-        try {
-            var zip = new require('node-zip')();
-            Object.keys(db).forEach(function(key) {
-                zip.file(key + '.json', JSON.stringify(db[key]));
-            });
-            var stream = zip.generate({
-                base64: false,
-                compression: 'DEFLATE'
-            });
-            var params = {
-                Bucket: config.bucket,
-                Key: dateFormat(new Date(), 'yyyy/mm/dd/HH-MM-ss') + '-foosball-backup.zip',
-                Body: new Buffer(stream, 'binary')
-            };
-            s3.upload(params, function(err, result) {
+        var zip = new require('node-zip')();
+        Object.keys(db).forEach(function(key) {
+            zip.file(key + '.json', JSON.stringify(db[key]));
+        });
+        var stream = zip.generate({
+            base64: false,
+            compression: 'DEFLATE'
+        });
+        var params = {
+            Bucket: config.bucket,
+            Key: dateFormat(new Date(), 'yyyy/mm/dd/HH-MM-ss') + '-foosball-backup.zip',
+            Body: new Buffer(stream, 'binary')
+        };
+        s3.upload(params, function(err, result) {
+            try {
                 if (err) {
-                    throw err;
+                    throw err.message;
                 }
-                sendSlackMessage('Firebase backup complete. Backup is located <' + result.Location + '|here>.' , function() {
-                  callback(null, "Backup complete to " + result.Location);
+                sendSlackMessage('Firebase backup complete. Backup is located <' + result.Location + '|here>.', function() {
+                    callback(null, "Backup complete to " + result.Location);
                 });
-            });
-        } catch (e) {
-            console.log(e);
-        }
+            } catch (e) {
+                sendSlackMessage('An error occured during the S3 backup: ' + e, function() {
+                    callback(e);
+                });
+            }
+        });
     });
 };
 
